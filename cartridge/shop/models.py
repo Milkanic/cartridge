@@ -110,6 +110,9 @@ class Product(Displayable, Priced, RichText, AdminThumbMixin):
 
     admin_thumb_field = "image"
 
+    custom_product = models.BooleanField(_("Custom Product"),
+                                    default=False)
+
     class Meta:
         verbose_name = _("Product")
         verbose_name_plural = _("Products")
