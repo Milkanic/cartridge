@@ -21,6 +21,8 @@ from cartridge.shop.models import Product, ProductOption, ProductVariation
 from cartridge.shop.models import Cart, CartItem, Order, DiscountCode
 from cartridge.shop.utils import make_choices, set_locale, set_shipping
 
+from quotes.models import Quote
+
 
 ADD_PRODUCT_ERRORS = {
     "invalid_options": _("The selected options are currently unavailable."),
@@ -119,6 +121,58 @@ class AddProductForm(forms.Form):
         self.variation = variation
         return self.cleaned_data
 
+class AddCustomProductForm(AddProductForm):
+
+    def __init__(self, *args, **kwargs):
+        self.quote = kwargs.pop('quote')
+        quote_text = ""
+        if self.quote:
+            quote_text = self.quote.text +"\n" + self.quote.author.name
+
+        super(AddCustomProductForm, self).__init__(*args, **kwargs)
+        self.fields["message"] = forms.CharField(widget=forms.Textarea, initial=quote_text)
+        self.fields["image_data"] = forms.CharField(widget=forms.HiddenInput())
+
+
+    def clean(self):
+        """
+        Determine the chosen variation, validate it and assign it as
+        an attribute to be used in views.
+        """
+        if not self.is_valid():
+            return
+        # Posted data will either be a sku, or product options for
+        # a variation.
+        data = self.cleaned_data.copy()
+        quantity = data.pop("quantity")
+        message = data.pop("message")
+        image_data = data.pop("image_data")
+        # Ensure the product has a price if adding to cart.
+        if self._to_cart:
+            data["unit_price__isnull"] = False
+        error = None
+        if self._product is not None:
+            # Chosen options will be passed to the product's
+            # variations.
+            qs = self._product.variations
+        else:
+            # A product hasn't been given since we have a direct sku.
+            qs = ProductVariation.objects
+        try:
+            variation = qs.get(**data)
+        except ProductVariation.DoesNotExist:
+            error = "invalid_options"
+        else:
+            # Validate stock if adding to cart.
+            if self._to_cart:
+                if not variation.has_stock():
+                    error = "no_stock"
+                elif not variation.has_stock(quantity):
+                    error = "no_stock_quantity"
+        if error is not None:
+            raise forms.ValidationError(ADD_PRODUCT_ERRORS[error])
+        self.variation = variation
+        return self.cleaned_data
 
 class CartItemForm(forms.ModelForm):
     """

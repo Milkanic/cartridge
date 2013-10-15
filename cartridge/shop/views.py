@@ -1,4 +1,7 @@
+import re
+import cStringIO
 from collections import defaultdict
+from copy import deepcopy
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages import info
@@ -11,6 +14,7 @@ from django.template.loader import get_template
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 from django.views.decorators.cache import never_cache
+from django.core.files.base import ContentFile
 
 from mezzanine.conf import settings
 from mezzanine.utils.importing import import_dotted_path
@@ -18,10 +22,13 @@ from mezzanine.utils.views import render, set_cookie, paginate
 
 from cartridge.shop import checkout
 from cartridge.shop.forms import AddProductForm, DiscountForm, CartItemFormSet
+from cartridge.shop.forms import AddCustomProductForm
 from cartridge.shop.models import Product, ProductVariation, Order, OrderItem
-from cartridge.shop.models import DiscountCode
-from cartridge.shop.utils import recalculate_discount, recalculate_billship_tax, sign
+from cartridge.shop.models import DiscountCode, Category, ProductImage
+from cartridge.shop.utils import recalculate_discount, recalculate_billship_tax
+from cartridge.shop.utils import sign, trunc
 
+from quotes.models import Quote
 
 # Set up checkout handlers.
 handler = lambda s: import_dotted_path(s) if s else lambda *args: None
@@ -44,16 +51,76 @@ def product(request, slug, template="shop/product.html"):
                                         for f in fields + ["sku", "image_id"]])
                                         for v in variations])
     to_cart = (request.method == "POST" and
-               request.POST.get("add_wishlist") is None)
+               request.POST.get("add_cart") is not None)
+
+    save_product = (request.method == "POST" and
+               request.POST.get("save_product") is not None)
     initial_data = {}
     if variations:
         initial_data = dict([(f, getattr(variations[0], f)) for f in fields])
     initial_data["quantity"] = 1
-    add_product_form = AddProductForm(request.POST or None, product=product,
+
+    if product.custom_product:
+        quote_id = request.GET.get('quote_id')
+        quote = None
+        if quote_id:
+            quote = get_object_or_404(Quote, pk=quote_id)
+        add_product_form = AddCustomProductForm(request.POST or None, product=product,
+                                      initial=initial_data, to_cart=to_cart, quote=quote)
+    else:
+        add_product_form = AddProductForm(request.POST or None, product=product,
                                       initial=initial_data, to_cart=to_cart)
+
+
     if request.method == "POST":
+
         if add_product_form.is_valid():
-            if to_cart:
+            if save_product:
+                user_catagory = Category.objects.get(pk=15)
+
+                new_product = product
+                new_images = product.images.all()
+                new_variations = variations
+
+                for i in new_images:
+                    i.pk = None
+                    i.id = None
+                    i.save()
+
+                message = add_product_form.cleaned_data["message"]
+                message = message.replace('\n', ' ')
+
+                new_product.pk = None
+                new_product.id = None
+                new_product.sku = None
+                new_product.title = trunc(s=message).title() + " Canvas Print"
+                new_product.slug = None
+                new_product.custom_product = False
+                #new_product.available = False
+                new_product.content = new_product.content +message
+                new_product.save()
+
+                new_product.categories.add(user_catagory)
+                new_product.images = new_images
+
+                data_uri = add_product_form.cleaned_data["image_data"]
+                img_str = re.search(r'base64,(.*)', data_uri).group(1)
+                temp_img = img_str.decode('base64')
+                image = ProductImage(file=ContentFile(temp_img, new_product.slug+'.png'), description = message, product=new_product)
+                image.save()
+
+                for v in new_variations:
+                    v.pk = None
+                    v.id = None
+                    v.sku = None
+                    v.image = image
+                    v.save()
+
+                new_product.variations = new_variations
+                new_product.copy_default_variation()
+                return redirect("shop_product", slug=new_product.slug)
+
+            elif to_cart:
                 quantity = add_product_form.cleaned_data["quantity"]
                 request.cart.add_item(add_product_form.variation, quantity)
                 recalculate_discount(request)

@@ -42,7 +42,7 @@ from cartridge.shop.forms import ProductVariationAdminFormset
 from cartridge.shop.forms import DiscountAdminForm, ImageWidget, MoneyWidget
 from cartridge.shop.models import Category, Product, ProductImage
 from cartridge.shop.models import ProductVariation, ProductOption, Order
-from cartridge.shop.models import OrderItem, Sale, DiscountCode
+from cartridge.shop.models import OrderItem, Sale, DiscountCode, Cart, CartItem
 
 
 # Lists of field names.
@@ -309,6 +309,15 @@ class DiscountCodeAdmin(admin.ModelAdmin):
             {"fields": (("valid_from", "valid_to", "uses_remaining"),)}),
     )
 
+class CartItemInline(admin.TabularInline):
+    verbose_name_plural = _("Items")
+    model = CartItem
+    extra = 0
+
+class CartAdmin(admin.ModelAdmin):
+    list_display = ("pk", "last_updated")
+    inlines = (CartItemInline,)
+
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdmin)
@@ -317,3 +326,4 @@ if settings.SHOP_USE_VARIATIONS:
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Sale, SaleAdmin)
 admin.site.register(DiscountCode, DiscountCodeAdmin)
+admin.site.register(Cart, CartAdmin)
