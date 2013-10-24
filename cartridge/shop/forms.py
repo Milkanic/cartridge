@@ -131,6 +131,7 @@ class AddCustomProductForm(AddProductForm):
 
         super(AddCustomProductForm, self).__init__(*args, **kwargs)
         self.fields["message"] = forms.CharField(widget=forms.Textarea, initial=quote_text)
+
         self.fields["image_data"] = forms.CharField(widget=forms.HiddenInput())
 
 
