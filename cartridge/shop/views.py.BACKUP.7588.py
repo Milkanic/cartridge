@@ -24,9 +24,14 @@ from cartridge.shop import checkout
 from cartridge.shop.forms import AddProductForm, DiscountForm, CartItemFormSet
 from cartridge.shop.forms import AddCustomProductForm
 from cartridge.shop.models import Product, ProductVariation, Order, OrderItem
-
+<<<<<<< HEAD
 from cartridge.shop.models import DiscountCode, Category, ProductImage
-from cartridge.shop.utils import recalculate_cart, sign, trunc
+from cartridge.shop.utils import recalculate_discount, recalculate_billship_tax
+from cartridge.shop.utils import sign, trunc
+=======
+from cartridge.shop.models import DiscountCode
+from cartridge.shop.utils import recalculate_cart, sign
+>>>>>>> 6050c84d34f71cecd75f3588841687cc0561dd82
 
 from quotes.models import Quote
 

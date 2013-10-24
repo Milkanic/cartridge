@@ -24,9 +24,9 @@ from cartridge.shop import checkout
 from cartridge.shop.forms import AddProductForm, DiscountForm, CartItemFormSet
 from cartridge.shop.forms import AddCustomProductForm
 from cartridge.shop.models import Product, ProductVariation, Order, OrderItem
-
 from cartridge.shop.models import DiscountCode, Category, ProductImage
-from cartridge.shop.utils import recalculate_cart, sign, trunc
+from cartridge.shop.utils import recalculate_discount, recalculate_billship_tax
+from cartridge.shop.utils import sign, trunc
 
 from quotes.models import Quote
 
@@ -123,7 +123,8 @@ def product(request, slug, template="shop/product.html"):
             elif to_cart:
                 quantity = add_product_form.cleaned_data["quantity"]
                 request.cart.add_item(add_product_form.variation, quantity)
-                recalculate_cart(request)
+                recalculate_discount(request)
+                recalculate_billship_tax(request)
                 info(request, _("Item added to cart"))
                 return redirect("shop_cart")
             else:
@@ -169,7 +170,8 @@ def wishlist(request, template="shop/wishlist.html"):
         if to_cart:
             if add_product_form.is_valid():
                 request.cart.add_item(add_product_form.variation, 1)
-                recalculate_cart(request)
+                recalculate_discount(request)
+                recalculate_billship_tax(request)
                 message = _("Item added to cart")
                 url = "shop_cart"
             else:
@@ -219,7 +221,8 @@ def cart(request, template="shop/cart.html"):
                 valid = cart_formset.is_valid()
                 if valid:
                     cart_formset.save()
-                    recalculate_cart(request)
+                    recalculate_discount(request)
+                    recalculate_billship_tax(request)
                     info(request, _("Cart updated"))
                 else:
                     # Reset the cart formset so that the cart
@@ -238,10 +241,8 @@ def cart(request, template="shop/cart.html"):
             return redirect("shop_cart")
     context = {"cart_formset": cart_formset}
     settings.use_editable()
-    no_discounts = not DiscountCode.objects.active().exists()
-    discount_applied = "discount_code" in request.session
-    discount_in_cart = settings.SHOP_DISCOUNT_FIELD_IN_CART
-    if not no_discounts and not discount_applied and discount_in_cart:
+    if (settings.SHOP_DISCOUNT_FIELD_IN_CART and
+        DiscountCode.objects.active().count() > 0):
         context["discount_form"] = discount_form
     return render(request, template, context)
 
@@ -357,10 +358,10 @@ def checkout_steps(request):
 
     step_vars = checkout.CHECKOUT_STEPS[step - 1]
     template = "shop/%s.html" % step_vars["template"]
-    context = {"CHECKOUT_STEP_FIRST": step == checkout.CHECKOUT_STEP_FIRST,
-               "CHECKOUT_STEP_LAST": step == checkout.CHECKOUT_STEP_LAST,
+    CHECKOUT_STEP_FIRST = step == checkout.CHECKOUT_STEP_FIRST
+    context = {"form": form, "CHECKOUT_STEP_FIRST": CHECKOUT_STEP_FIRST,
                "step_title": step_vars["title"], "step_url": step_vars["url"],
-               "steps": checkout.CHECKOUT_STEPS, "step": step, "form": form}
+               "steps": checkout.CHECKOUT_STEPS, "step": step}
     return render(request, template, context)
 
 
