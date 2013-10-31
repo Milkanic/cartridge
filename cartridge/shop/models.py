@@ -21,6 +21,9 @@ from mezzanine.utils.models import AdminThumbMixin, upload_to
 
 from cartridge.shop import fields, managers
 
+from quotes.models import Quote
+
+
 try:
     from _mysql_exceptions import OperationalError
 except ImportError:
@@ -848,3 +851,18 @@ class DiscountCode(Discount):
     class Meta:
         verbose_name = _("Discount code")
         verbose_name_plural = _("Discount codes")
+
+
+class CustomProduct(models.Model):
+
+    product = models.ForeignKey("Product")
+    quote = models.ForeignKey(Quote, blank=True, null=True)
+    text = models.TextField(blank=True, null=True)
+    json = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add = True)
+
+    def __unicode__(self):
+        return self.text
+
+    class Meta:
+        ordering = ("-id",)

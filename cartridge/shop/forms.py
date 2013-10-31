@@ -133,6 +133,7 @@ class AddCustomProductForm(AddProductForm):
         self.fields["message"] = forms.CharField(widget=forms.Textarea, initial=quote_text)
 
         self.fields["image_data"] = forms.CharField(widget=forms.HiddenInput())
+        self.fields["json_data"] = forms.CharField(widget=forms.HiddenInput())
 
 
     def clean(self):
@@ -148,6 +149,7 @@ class AddCustomProductForm(AddProductForm):
         quantity = data.pop("quantity")
         message = data.pop("message")
         image_data = data.pop("image_data")
+        json_data = data.pop("json_data")
         # Ensure the product has a price if adding to cart.
         if self._to_cart:
             data["unit_price__isnull"] = False

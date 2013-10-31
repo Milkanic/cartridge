@@ -1,0 +1,8 @@
+d02MckJusn#
+
+b02MckJust
+
+for q in quotes:
+	print q
+	for t in q.tags.all():
+		print t,

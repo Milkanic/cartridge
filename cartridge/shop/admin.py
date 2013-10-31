@@ -43,7 +43,7 @@ from cartridge.shop.forms import DiscountAdminForm, ImageWidget, MoneyWidget
 from cartridge.shop.models import Category, Product, ProductImage
 from cartridge.shop.models import ProductVariation, ProductOption, Order
 from cartridge.shop.models import OrderItem, Sale, DiscountCode, Cart, CartItem
-
+from cartridge.shop.models import CustomProduct
 
 # Lists of field names.
 option_fields = [f.name for f in ProductVariation.option_fields()]
@@ -318,7 +318,10 @@ class CartAdmin(admin.ModelAdmin):
     list_display = ("pk", "last_updated")
     inlines = (CartItemInline,)
 
+class CustomProductAdmin(admin.ModelAdmin):
+    list_display = ('pk','text','created_at')
 
+admin.site.register(CustomProduct, CustomProductAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdmin)
 if settings.SHOP_USE_VARIATIONS:

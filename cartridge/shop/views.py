@@ -27,6 +27,7 @@ from cartridge.shop.models import Product, ProductVariation, Order, OrderItem
 
 from cartridge.shop.models import DiscountCode, Category, ProductImage
 from cartridge.shop.utils import recalculate_cart, sign, trunc
+from cartridge.shop.models import CustomProduct
 
 from quotes.models import Quote
 
@@ -60,9 +61,10 @@ def product(request, slug, template="shop/product.html"):
         initial_data = dict([(f, getattr(variations[0], f)) for f in fields])
     initial_data["quantity"] = 1
 
+    quote = None
     if product.custom_product:
         quote_id = request.GET.get('quote_id')
-        quote = None
+
         if quote_id:
             quote = get_object_or_404(Quote, pk=quote_id)
         add_product_form = AddCustomProductForm(request.POST or None, product=product,
@@ -88,16 +90,16 @@ def product(request, slug, template="shop/product.html"):
                     i.save()
 
                 message = add_product_form.cleaned_data["message"]
-                message = message.replace('\n', ' ')
+                flat_message = message.replace('\n', ' ')
 
                 new_product.pk = None
                 new_product.id = None
                 new_product.sku = None
-                new_product.title = trunc(s=message).title() + " Canvas Print"
+                new_product.title = trunc(s=flat_message).title() + " Canvas Print"
                 new_product.slug = None
                 new_product.custom_product = False
                 #new_product.available = False
-                new_product.content = new_product.content +message
+                new_product.content = new_product.content +flat_message
                 new_product.save()
 
                 new_product.categories.add(user_catagory)
@@ -118,6 +120,11 @@ def product(request, slug, template="shop/product.html"):
 
                 new_product.variations = new_variations
                 new_product.copy_default_variation()
+
+                json = add_product_form.cleaned_data["json_data"]
+                custom_product = CustomProduct(product = new_product, text = message, quote=quote, json=json)
+                custom_product.save()
+
                 return redirect("shop_product", slug=new_product.slug)
 
             elif to_cart:
