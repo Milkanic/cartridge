@@ -18,18 +18,9 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'shop', ['CustomProduct'])
 
-        # Deleting field 'ProductVariation.option2'
-        db.delete_column(u'shop_productvariation', 'option2')
-
-
     def backwards(self, orm):
         # Deleting model 'CustomProduct'
         db.delete_table(u'shop_customproduct')
-
-        # Adding field 'ProductVariation.option2'
-        db.add_column(u'shop_productvariation', 'option2',
-                      self.gf('cartridge.shop.fields.OptionField')(max_length=50, null=True),
-                      keep_default=False)
 
 
     models = {
