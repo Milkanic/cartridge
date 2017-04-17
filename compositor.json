@@ -1,0 +1,96 @@
+{
+  "name": "jbmckeon/cartridge",
+  "version": "0.1.4",
+  "libraries": {
+    "xv": "^1.1.25"
+  },
+  "title": "Test",
+  "branch": "",
+  "style": {
+    "name": "Future",
+    "componentSet": {
+      "nav": "nav/BasicNav",
+      "header": "header/BannerHeader",
+      "article": "article/BasicArticle",
+      "footer": "footer/BasicFooter"
+    },
+    "fontFamily": "\"Avenir Next\", Helvetica, sans-serif",
+    "heading": {
+      "fontWeight": 500,
+      "textTransform": "uppercase",
+      "letterSpacing": "0.2em"
+    },
+    "alternativeText": {
+      "textTransform": "uppercase",
+      "fontWeight": 400,
+      "letterSpacing": "0.2em",
+      "opacity": 0.75
+    },
+    "colors": {
+      "text": "#333",
+      "background": "#fff",
+      "primary": "#666",
+      "secondary": "#888",
+      "highlight": "#1f80ff",
+      "muted": "#f6f6f6",
+      "border": "#eee"
+    },
+    "layout": {
+      "centered": true,
+      "maxWidth": 1024,
+      "bannerHeight": "80vh"
+    }
+  },
+  "content": [
+    {
+      "component": "nav",
+      "links": [
+        {
+          "href": "http://cartridge.jupo.org",
+          "text": "Home"
+        },
+        {
+          "href": "https://github.com/jbmckeon/cartridge",
+          "text": "GitHub"
+        }
+      ]
+    },
+    {
+      "component": "header",
+      "heading": "cartridge",
+      "subhead": "A Django shopping cart application.",
+      "children": [
+        {
+          "component": "ui/TweetButton",
+          "text": "cartridge: A Django shopping cart application.",
+          "url": "http://cartridge.jupo.org"
+        },
+        {
+          "component": "ui/GithubButton",
+          "user": "jbmckeon",
+          "repo": "cartridge"
+        }
+      ]
+    },
+    {
+      "component": "article",
+      "metadata": {
+        "source": "github.readme"
+      },
+      "html": "<p>.. image:: <a href=\"https://secure.travis-ci.org/stephenmcd/cartridge.png?branch=master\">https://secure.travis-ci.org/stephenmcd/cartridge.png?branch=master</a>\n   :target: <a href=\"http://travis-ci.org/#!/stephenmcd/cartridge\">http://travis-ci.org/#!/stephenmcd/cartridge</a></p>\n<p>Created by <code>Stephen McDonald &lt;http://twitter.com/stephen_mcd&gt;</code>_</p>\n<p>========</p>\n<h1>Overview</h1>\n<p>Cartridge is a shopping cart application built using the <code>Django</code><em>\nframework. It is <code>BSD licensed</code></em> and designed to provide a clean and\nsimple base for developing e-commerce websites. It purposely does not\ninclude every conceivable feature of an e-commerce website; instead,\nCartridge focuses on providing core features common to most e-commerce\nwebsites.</p>\n<p>This specific focus stems from the idea that every e-commerce website\nis different, is tailored to the particular business and products at\nhand, and should therefore be as easy to customize as possible.\nCartridge achieves this goal with a code-base that is as simple as\npossible and implements only the core features of an e-commerce\nwebsite.</p>\n<p>Cartridge extends the <code>Mezzanine</code><em> content management platform. A live\ndemo of Cartridge can be found by visiting the <code>Mezzanine live demo</code></em>.</p>\n<h1>Features</h1>\n<ul>\n<li>Hierarchical categories</li>\n<li>Easily configurable product options (colours, sizes, etc.)</li>\n<li>Hooks for tax/shipping calculations and payment gateways</li>\n<li>Sale pricing</li>\n<li>Promotional discount codes</li>\n<li>PDF invoice generation (for packing slips)</li>\n<li>Stock control</li>\n<li>Product popularity</li>\n<li>Thumbnail generation</li>\n<li>Built-in test suite</li>\n<li>Separation of presentation (no embedded markup)</li>\n<li>Smart categories (by price range, colour, etc)</li>\n<li>Registered or anonymous checkout</li>\n<li>Configurable number of checkout steps</li>\n<li>Denormalised data for accessiblilty and performance</li>\n<li>Authenticated customer accounts with transaction history</li>\n</ul>\n<h1>Dependencies</h1>\n<p>Cartridge is designed as a plugin for the <code>Mezzanine</code><em> content\nmanagement platform and, as such, requires <code>Mezzanine</code></em> to be\ninstalled. The integration of the two applications should occur\nautomatically by following the installation instructions below.</p>\n<h1>Installation</h1>\n<p>The easiest method is to install directly from pypi using <code>pip</code>_ by\nrunning the command below, which will also install the required\ndependencies mentioned above::</p>\n<pre>$ pip <span class=\"hljs-keyword\">install</span> -U cartridge</pre><p>Otherwise, you can download Cartridge and install it directly from source::</p>\n<pre>$ python setup<span class=\"hljs-selector-class\">.py</span> install</pre><p>Once installed, the command <code>mezzanine-project</code> can be used to\ncreate a new Mezzanine project, with Cartridge installed, in similar\nfashion to <code>django-admin.py</code>::</p>\n<pre>$ mezzanine-project -<span class=\"hljs-selector-tag\">a</span> cartridge project_name\n$ cd project_name\n$ python manage<span class=\"hljs-selector-class\">.py</span> createdb --noinput\n$ python manage<span class=\"hljs-selector-class\">.py</span> runserver</pre><p>Here we specify the <code>-a</code> switch for the <code>mezzanine-project</code> command,\nwhich tells it to use an alternative package (cartridge) for the project\ntemplate to use. Both Mezzanine and Cartridge contain a project template\npackage containing the <code>settings.py</code> and <code>urls.py</code> modules for an\ninitial project. If you&apos;d like to add Cartridge to an existing Mezzanine\nor Django project, you&apos;ll need to manually configure these yourself. See\nthe <code>FAQ section of the Mezzanine documentation</code>_ for more information.</p>\n<p>.. note::</p>\n<pre>The ``createdb`` is <span class=\"hljs-literal\">a</span> shortcut for using Django&apos;s ``syncdb``\ncommand <span class=\"hljs-literal\">and</span> setting the initial migration state for `South`_. You\ncan alternatively use ``syncdb`` <span class=\"hljs-literal\">and</span> ``migrate`` <span class=\"hljs-keyword\">if</span> preferred.\nSouth is automatically added to INSTALLED_APPS <span class=\"hljs-keyword\">if</span> the\n``USE_SOUTH`` setting is set to ``<span class=\"hljs-literal\">True</span>``.</pre><p>You should then be able to browse to <a href=\"http://127.0.0.1:8000/admin/\">http://127.0.0.1:8000/admin/</a> and\nlog in using the default account (<code>username: admin, password:\ndefault</code>). If you&apos;d like to specify a different username and password\nduring set up, simply exclude the <code>--noinput</code> option included above\nwhen running <code>createdb</code>.</p>\n<h1>Contributing</h1>\n<p>Cartridge is an open source project managed using both the Git and\nMercurial version control systems. These repositories are hosted on\nboth <code>GitHub</code><em> and <code>Bitbucket</code></em> respectively, so contributing is as\neasy as forking the project on either of these sites and committing\nback your enhancements.</p>\n<p>Please note the following guidelines for contributing:</p>\n<ul>\n<li>Contributed code must be written in the existing style. This is\nas simple as following the <code>Django coding style</code><em> and (most\nimportantly) <code>PEP 8</code></em>.</li>\n<li>Contributions must be available on a separately named branch\nbased on the latest version of the main branch.</li>\n<li>Run the tests before committing your changes. If your changes\ncause the tests to break, they won&apos;t be accepted.</li>\n<li>If you are adding new functionality, you must include basic tests\nand documentation.</li>\n</ul>\n<p>If you want to do development with Cartridge, here&apos;s a quick way to set\nup a development environment and run the Cartridge unit tests, using\n<code>virtualenvwrapper</code>_ to set up a virtualenv::</p>\n<pre><span class=\"hljs-symbol\">$</span> mkvirtualenv cartridge\n<span class=\"hljs-symbol\">$</span> workon cartridge\n<span class=\"hljs-symbol\">$</span> pip install -e git:<span class=\"hljs-comment\">//github.com/stephenmcd/mezzanine.git#egg=mezzanine</span>\n<span class=\"hljs-symbol\">$</span> pip install pep8 pyflakes\n<span class=\"hljs-symbol\">$</span> git clone https:<span class=\"hljs-comment\">//github.com/stephenmcd/cartridge</span>\n<span class=\"hljs-symbol\">$</span> cd cartridge\n<span class=\"hljs-symbol\">$</span> python setup.py develop\n<span class=\"hljs-symbol\">$</span> cp cartridge/project_template/local_settings.py.template cartridge/project_template/local_settings.py\n<span class=\"hljs-symbol\">$</span> ./cartridge/project_template/manage.py test shop</pre><h1>Language Translations</h1>\n<p>Cartridge makes full use of translation strings, which allow Cartridge\nto be translated into multiple languages using <code>Django&apos;s\ninternationalization</code><em> methodology. Translations are managed on the\n<code>Transiflex</code></em> website but can also be submitted via <code>GitHub</code><em> or\n<code>Bitbucket</code></em>. Consult the documentation for <code>Django&apos;s\ninternationalization</code>_ methodology for more information on creating\ntranslations and using them.</p>\n<h1>Donating</h1>\n<p>If you would like to make a donation to continue development of\nCartridge, you can do so via the <code>Mezzanine Project</code>_ website.</p>\n<h1>Support</h1>\n<p>To report a security issue, please send an email privately to\n<code>security@jupo.org</code>_. This gives us a chance to fix the issue and\ncreate an official release prior to the issue being made\npublic.</p>\n<p>For general questions or comments, please join the <code>mezzanine-users</code><em>\nmailing list. To report a bug or other type of issue, please use the\n<code>GitHub issue tracker</code></em>. And feel free to drop by the <code>#mezzanine\nIRC channel</code><em> on <code>Freenode</code></em>, for a chat.</p>\n<h1>Sites Using Cartridge</h1>\n<ul>\n<li><code>Ripe Maternity &lt;http://www.ripematernity.com&gt;</code>_</li>\n<li><code>Cotton On &lt;http://shop.cottonon.com&gt;</code>_</li>\n<li><code>Coopers Store &lt;http://store.coopers.com.au&gt;</code>_</li>\n<li><code>Sheer Ethic &lt;http://sheerethic.com&gt;</code>_</li>\n<li><code>tindie.com &lt;http://tindie.com&gt;</code>_</li>\n<li><code>Ross A. Laird &lt;http://rosslaird.com/shop&gt;</code>_</li>\n<li><code>Pink Twig &lt;http://www.pinktwig.ca/shop&gt;</code>_</li>\n<li><code>Parfume Planet &lt;http://parfumeplanet.com&gt;</code>_</li>\n<li><code>Life is Good &lt;http://lifeisgoodforall.co.uk/&gt;</code>_</li>\n<li><code>Brooklyn Navy Yard &lt;http://bldg92.org/&gt;</code>_</li>\n<li><code>Cotton On Asia &lt;http://asia.cottonon.com/&gt;</code>_</li>\n<li><code>Manai Glitter &lt;https://manai.co.uk&gt;</code>_</li>\n<li><code>Tactical Bags &lt;http://tacticalbags.ru&gt;</code>_</li>\n<li><code>Charles Koll Jewelry &lt;http://charleskoll.com&gt;</code>_</li>\n<li><code>Puraforce Remedies &lt;http://puraforceremedies.com/&gt;</code>_</li>\n<li><code>Adrenaline &lt;http://www.adrln.com/&gt;</code>_</li>\n<li><code>The Peculiar Store &lt;http://thepeculiarstore.com&gt;</code>_</li>\n<li><code>KisanHub &lt;http://www.kisanhub.com/&gt;</code>_</li>\n<li><code>Kegbot &lt;http://kegbot.org&gt;</code>_</li>\n<li><code>Amblitec &lt;http://www.amblitec.com&gt;</code>_</li>\n<li><code>ZigZag Bags &lt;http://www.zigzagbags.com.au&gt;</code>_</li>\n</ul>\n<p>.. <em><code>Django</code>: <a href=\"http://djangoproject.com/\">http://djangoproject.com/</a>\n.. </em><code>BSD licensed</code>: <a href=\"http://www.linfo.org/bsdlicense.html\">http://www.linfo.org/bsdlicense.html</a>\n.. <em><code>Mezzanine live demo</code>: <a href=\"http://mezzanine.jupo.org/\">http://mezzanine.jupo.org/</a>\n.. </em><code>Mezzanine</code>: <a href=\"http://mezzanine.jupo.org/\">http://mezzanine.jupo.org/</a>\n.. <em><code>Mezzanine Project</code>: <a href=\"http://mezzanine.jupo.org/\">http://mezzanine.jupo.org/</a>\n.. </em><code>pip</code>: <a href=\"http://www.pip-installer.org/\">http://www.pip-installer.org/</a>\n.. <em><code>FAQ section of the Mezzanine documentation</code>: <a href=\"http://mezzanine.jupo.org/docs/frequently-asked-questions.html#how-can-i-add-mezzanine-to-an-existing-django-project\">http://mezzanine.jupo.org/docs/frequently-asked-questions.html#how-can-i-add-mezzanine-to-an-existing-django-project</a>\n.. </em><code>setuptools</code>: <a href=\"http://pypi.python.org/pypi/setuptools\">http://pypi.python.org/pypi/setuptools</a>\n.. <em><code>South</code>: <a href=\"http://south.aeracode.org/\">http://south.aeracode.org/</a>\n.. </em><code>Github</code>: <a href=\"http://github.com/stephenmcd/cartridge/\">http://github.com/stephenmcd/cartridge/</a>\n.. <em><code>Bitbucket</code>: <a href=\"http://bitbucket.org/stephenmcd/cartridge/\">http://bitbucket.org/stephenmcd/cartridge/</a>\n.. </em><code>mezzanine-users</code>: <a href=\"http://groups.google.com/group/mezzanine-users\">http://groups.google.com/group/mezzanine-users</a>\n.. <em><code>Github issue tracker</code>: <a href=\"http://github.com/stephenmcd/cartridge/issues\">http://github.com/stephenmcd/cartridge/issues</a>\n.. </em><code>Django coding style</code>: <a href=\"http://docs.djangoproject.com/en/dev/internals/contributing/#coding-style\">http://docs.djangoproject.com/en/dev/internals/contributing/#coding-style</a>\n.. <em><code>PEP 8</code>: <a href=\"http://www.python.org/dev/peps/pep-0008/\">http://www.python.org/dev/peps/pep-0008/</a>\n.. </em><code>Transiflex</code>: <a href=\"https://www.transifex.net/projects/p/mezzanine/\">https://www.transifex.net/projects/p/mezzanine/</a>\n.. <em><code>security@jupo.org</code>: mailto:security@jupo.org?subject=Mezzanine+Security+Issue\n.. </em><code>#mezzanine IRC channel</code>: irc://freenode.net/mezzanine\n.. <em><code>Freenode</code>: <a href=\"http://freenode.net\">http://freenode.net</a>\n.. </em><code>Django&apos;s internationalization</code>: <a href=\"https://docs.djangoproject.com/en/dev/topics/i18n/translation/\">https://docs.djangoproject.com/en/dev/topics/i18n/translation/</a>\n.. _<code>virtualenvwrapper</code>: <a href=\"http://www.doughellmann.com/projects/virtualenvwrapper\">http://www.doughellmann.com/projects/virtualenvwrapper</a></p>\n"
+    },
+    {
+      "component": "footer",
+      "links": [
+        {
+          "href": "https://github.com/jbmckeon/cartridge",
+          "text": "GitHub"
+        },
+        {
+          "href": "https://github.com/jbmckeon",
+          "text": "jbmckeon"
+        }
+      ]
+    }
+  ]
+}
